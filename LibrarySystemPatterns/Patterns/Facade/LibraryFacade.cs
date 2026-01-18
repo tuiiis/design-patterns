@@ -3,6 +3,7 @@ using LibrarySystemPatterns.Patterns.Composite;
 using LibrarySystemPatterns.Patterns.Decorator;
 using LibrarySystemPatterns.Patterns.Adapter;
 using LibrarySystemPatterns.Patterns.Proxy;
+using LibrarySystemPatterns;
 
 namespace LibrarySystemPatterns.Patterns.Facade;
 
@@ -13,18 +14,15 @@ public class LibraryFacade
     private readonly BookCategory _rootCategory;
     private readonly ISearchSystem _searchSystem;
     private readonly ILibraryManagement _libraryManagement;
-    private readonly string _userRole;
+    private readonly UserRole _userRole;
 
-    public LibraryFacade(string userRole)
+    public LibraryFacade(UserRole userRole)
     {
-        if (string.IsNullOrWhiteSpace(userRole))
-            throw new ArgumentException("роль пользователя не может быть пустой", nameof(userRole));
-
         _userRole = userRole;
 
         // инициализируем все подсистемы
         _authorFactory = new AuthorFactory();
-        _rootCategory = new BookCategory("каталог библиотеки");
+        _rootCategory = new BookCategory("Library Catalog");
         
         var oldSearchSystem = new OldSearchSystem();
         _searchSystem = new SearchSystemAdapter(oldSearchSystem);
@@ -39,7 +37,7 @@ public class LibraryFacade
         _libraryManagement.AddBookToCatalog(title);
 
         // только админ может добавлять
-        if (!_userRole.Equals("Admin", StringComparison.OrdinalIgnoreCase))
+        if (_userRole != UserRole.Admin)
         {
             return;
         }
@@ -56,7 +54,7 @@ public class LibraryFacade
     {
         if (string.IsNullOrWhiteSpace(query))
         {
-            Console.WriteLine("ошибка: запрос не может быть пустым");
+            Console.WriteLine("Error: Query cannot be empty");
             return;
         }
 
@@ -66,8 +64,8 @@ public class LibraryFacade
     // показываем весь каталог
     public void ShowCatalog()
     {
-        Console.WriteLine("каталог библиотеки:");
-        Console.WriteLine("==================");
+        Console.WriteLine("Library Catalog:");
+        Console.WriteLine("===============");
         _rootCategory.Display(0);
     }
 
@@ -76,7 +74,7 @@ public class LibraryFacade
     {
         if (string.IsNullOrWhiteSpace(title))
         {
-            Console.WriteLine("ошибка: название книги не может быть пустым");
+            Console.WriteLine("Error: Book title cannot be empty");
             return;
         }
 
@@ -84,7 +82,7 @@ public class LibraryFacade
 
         if (bookComponent == null || parentCategory == null)
         {
-            Console.WriteLine($"ошибка: книга '{title}' не найдена в каталоге");
+            Console.WriteLine($"Error: Book '{title}' not found in catalog");
             return;
         }
 
@@ -102,11 +100,11 @@ public class LibraryFacade
         if (parentCategory.Remove(bookComponent))
         {
             parentCategory.Add(ratedBook);
-            Console.WriteLine($"книге '{title}' присвоен рейтинг {rating:F1}");
+            Console.WriteLine($"Rating {rating:F1} assigned to book '{title}'");
         }
         else
         {
-            Console.WriteLine($"ошибка: не удалось обновить рейтинг для книги '{title}'");
+            Console.WriteLine($"Error: Failed to update rating for book '{title}'");
         }
     }
 
@@ -115,7 +113,7 @@ public class LibraryFacade
     {
         if (string.IsNullOrWhiteSpace(title))
         {
-            Console.WriteLine("ошибка: название книги не может быть пустым");
+            Console.WriteLine("Error: Book title cannot be empty");
             return;
         }
 
@@ -127,7 +125,7 @@ public class LibraryFacade
     {
         if (string.IsNullOrWhiteSpace(title))
         {
-            Console.WriteLine("ошибка: название книги не может быть пустым");
+            Console.WriteLine("Error: Book title cannot be empty");
             return;
         }
 

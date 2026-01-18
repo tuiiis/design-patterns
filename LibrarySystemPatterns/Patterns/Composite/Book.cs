@@ -22,8 +22,8 @@ public class Book : LibraryComponent
     {
         string indent = new string(' ', depth * 2);
         string status = IsCheckedOut 
-            ? $" [выдана: {CheckedOutBy}]" 
-            : " [доступна]";
-        Console.WriteLine($"{indent}- книга: {Title}, автор: {Author.Name}{status}");
+            ? $" [Checked Out: {CheckedOutBy}]" 
+            : " [Available]";
+        Console.WriteLine($"{indent}- Book: {Title}, Author: {Author.Name}{status}");
     }
 }

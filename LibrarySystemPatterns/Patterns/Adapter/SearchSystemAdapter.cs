@@ -17,7 +17,7 @@ public class SearchSystemAdapter : ISearchSystem
     {
         if (string.IsNullOrWhiteSpace(query))
         {
-            Console.WriteLine("ошибка: запрос не может быть пустым");
+            Console.WriteLine("Error: Query cannot be empty");
             return;
         }
 

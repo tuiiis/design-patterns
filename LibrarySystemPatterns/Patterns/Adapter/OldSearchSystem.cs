@@ -6,6 +6,6 @@ public class OldSearchSystem
     // поиск в старой системе - принимает только JSON
     public string LegacySearch(string jsonQuery)
     {
-        return $"результаты поиска для запроса: {jsonQuery}";
+        return $"Search results for query: {jsonQuery}";
     }
 }

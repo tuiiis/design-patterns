@@ -37,7 +37,7 @@ public class BookCategory : LibraryComponent
     public override void Display(int depth)
     {
         string indent = new string(' ', depth * 2);
-        Console.WriteLine($"{indent}+ категория: {Name}");
+        Console.WriteLine($"{indent}+ Category: {Name}");
 
         foreach (var child in _children)
         {

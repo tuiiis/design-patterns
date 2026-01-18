@@ -4,10 +4,11 @@ using LibrarySystemPatterns.Patterns.Decorator;
 using LibrarySystemPatterns.Patterns.Adapter;
 using LibrarySystemPatterns.Patterns.Proxy;
 using LibrarySystemPatterns.Patterns.Facade;
+using LibrarySystemPatterns;
 using Bogus;
 using System.Linq;
 
-Console.WriteLine("=== паттерн flyweight ===\n");
+Console.WriteLine("=== Flyweight Pattern ===\n");
 
 // демонстрация паттерна flyweight - переиспользование объектов авторов
 var factory = new AuthorFactory();
@@ -15,23 +16,23 @@ var author1 = factory.GetAuthor("J.K. Rowling");
 var author2 = factory.GetAuthor("J.K. Rowling");
 var author3 = factory.GetAuthor("George R.R. Martin");
 
-Console.WriteLine($"автор 1 и автор 2 - один объект: {ReferenceEquals(author1, author2)}");
-Console.WriteLine($"всего уникальных авторов: {factory.AuthorCount}\n");
+Console.WriteLine($"Author 1 and Author 2 are the same object: {ReferenceEquals(author1, author2)}");
+Console.WriteLine($"Total unique authors: {factory.AuthorCount}\n");
 
-Console.WriteLine("=== паттерн composite ===\n");
+Console.WriteLine("=== Composite Pattern ===\n");
 
 // создаем структуру категорий и книг
 var rowling = factory.GetAuthor("J.K. Rowling");
 var martin = factory.GetAuthor("George R.R. Martin");
 var tolkien = factory.GetAuthor("J.R.R. Tolkien");
 
-var harryPotter1 = new Book("Гарри Поттер и философский камень", rowling);
-var harryPotter2 = new Book("Гарри Поттер и тайная комната", rowling);
-var gameOfThrones = new Book("Игра престолов", martin);
-var hobbit = new Book("Хоббит", tolkien);
+var harryPotter1 = new Book("Harry Potter and the Philosopher's Stone", rowling);
+var harryPotter2 = new Book("Harry Potter and the Chamber of Secrets", rowling);
+var gameOfThrones = new Book("A Game of Thrones", martin);
+var hobbit = new Book("The Hobbit", tolkien);
 
-var fantasyCategory = new BookCategory("Фантастика");
-var fictionCategory = new BookCategory("Художественная литература");
+var fantasyCategory = new BookCategory("Fantasy");
+var fictionCategory = new BookCategory("Fiction");
 
 fantasyCategory.Add(harryPotter1);
 fantasyCategory.Add(harryPotter2);
@@ -40,52 +41,52 @@ fantasyCategory.Add(hobbit);
 
 fictionCategory.Add(fantasyCategory);
 
-Console.WriteLine("структура библиотеки:");
+Console.WriteLine("Library Structure:");
 fictionCategory.Display(0);
 Console.WriteLine();
 
-Console.WriteLine("=== паттерн decorator ===\n");
+Console.WriteLine("=== Decorator Pattern ===\n");
 
 // добавляем рейтинг к книгам через декоратор
-var book1 = new Book("Великий Гэтсби", factory.GetAuthor("F. Scott Fitzgerald"));
+var book1 = new Book("The Great Gatsby", factory.GetAuthor("F. Scott Fitzgerald"));
 var ratedBook1 = new RatingDecorator(book1, 4.5);
 
 ratedBook1.Display(0);
 Console.WriteLine();
 
-Console.WriteLine("=== паттерн adapter ===\n");
+Console.WriteLine("=== Adapter Pattern ===\n");
 
 // адаптируем старую систему поиска к новому интерфейсу
 var oldSearchSystem = new OldSearchSystem();
 ISearchSystem searchSystem = new SearchSystemAdapter(oldSearchSystem);
 
-searchSystem.Search("фантастика");
+searchSystem.Search("fantasy");
 Console.WriteLine();
 
-Console.WriteLine("=== паттерн proxy ===\n");
+Console.WriteLine("=== Proxy Pattern ===\n");
 
 // проверяем контроль доступа через прокси
-var proxyDemoCatalog = new BookCategory("Каталог");
+var proxyDemoCatalog = new BookCategory("Catalog");
 
-var adminManager = new LibraryManagerProxy("Admin", proxyDemoCatalog);
-Console.WriteLine("[администратор]");
-adminManager.AddBookToCatalog("Война и мир");
+var adminManager = new LibraryManagerProxy(UserRole.Admin, proxyDemoCatalog);
+Console.WriteLine("[Administrator]");
+adminManager.AddBookToCatalog("War and Peace");
 
-var regularUserManager = new LibraryManagerProxy("User", proxyDemoCatalog);
-Console.WriteLine("\n[обычный пользователь]");
-regularUserManager.AddBookToCatalog("Анна Каренина");
+var regularUserManager = new LibraryManagerProxy(UserRole.User, proxyDemoCatalog);
+Console.WriteLine("\n[Regular User]");
+regularUserManager.AddBookToCatalog("Anna Karenina");
 Console.WriteLine();
 
-Console.WriteLine("=== паттерн facade ===\n");
+Console.WriteLine("=== Facade Pattern ===\n");
 
 // используем фасад для упрощенной работы с системой
-var adminFacade = new LibraryFacade("Admin");
+var adminFacade = new LibraryFacade(UserRole.Admin);
 
 // добавляем книги через bogus (демонстрация flyweight и composite)
 var faker = new Faker();
-var categories = new[] { "Фантастика", "Детектив", "Роман", "Триллер" };
+var categories = new[] { "Fantasy", "Mystery", "Romance", "Thriller" };
 
-Console.WriteLine("добавляем книги через bogus...\n");
+Console.WriteLine("Adding books via Bogus...\n");
 
 for (int i = 0; i < 10; i++)
 {
@@ -97,21 +98,26 @@ for (int i = 0; i < 10; i++)
     adminFacade.AddBook(category, bookTitle, authorName);
 }
 
-Console.WriteLine($"\nдобавлено 10 книг\n");
+Console.WriteLine($"\n10 books added\n");
 
 // поиск через адаптер
-adminFacade.Search("фантастика");
+adminFacade.Search("fantasy");
 Console.WriteLine();
 
 // показываем каталог
 adminFacade.ShowCatalog();
 Console.WriteLine();
 
-// оформление и возврат через прокси
-var userFacade = new LibraryFacade("User");
-Console.WriteLine("[пользователь оформляет книгу]");
-userFacade.CheckoutBook("тестовая книга");
+// добавляем конкретную книгу для демонстрации checkout/return
+adminFacade.AddBook("Fantasy", "The Hobbit", "J.R.R. Tolkien");
 Console.WriteLine();
-Console.WriteLine("[пользователь возвращает книгу]");
-userFacade.ReturnBook("тестовая книга");
+
+// оформление и возврат через прокси
+// используем adminFacade, так как книга в его каталоге
+// прокси проверяет права - админ может оформлять и возвращать книги
+Console.WriteLine("[Administrator Checking Out Book]");
+adminFacade.CheckoutBook("The Hobbit");
+Console.WriteLine();
+Console.WriteLine("[Administrator Returning Book]");
+adminFacade.ReturnBook("The Hobbit");
 Console.WriteLine();

@@ -20,6 +20,6 @@ public class RatingDecorator : BookDecorator
     {
         base.Display(depth);
         string indent = new string(' ', depth * 2);
-        Console.WriteLine($"{indent}  *** рейтинг: {_rating:F1} ***");
+        Console.WriteLine($"{indent}  *** Rating: {_rating:F1} ***");
     }
 }

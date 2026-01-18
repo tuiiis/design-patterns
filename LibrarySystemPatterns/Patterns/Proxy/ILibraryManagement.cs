@@ -1,3 +1,5 @@
+using LibrarySystemPatterns;
+
 namespace LibrarySystemPatterns.Patterns.Proxy;
 
 // интерфейс для управления библиотекой
@@ -7,7 +9,7 @@ public interface ILibraryManagement
     void AddBookToCatalog(string title);
 
     // оформить книгу
-    void CheckoutBook(string title, string userRole);
+    void CheckoutBook(string title, UserRole userRole);
 
     // вернуть книгу
     void ReturnBook(string title);

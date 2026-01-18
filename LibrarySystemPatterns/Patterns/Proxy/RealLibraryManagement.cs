@@ -1,5 +1,6 @@
 using LibrarySystemPatterns.Patterns.Composite;
 using LibrarySystemPatterns.Patterns.Decorator;
+using LibrarySystemPatterns;
 
 namespace LibrarySystemPatterns.Patterns.Proxy;
 
@@ -18,38 +19,38 @@ public class RealLibraryManagement : ILibraryManagement
     {
         if (string.IsNullOrWhiteSpace(title))
         {
-            Console.WriteLine("ошибка: название книги не может быть пустым");
+            Console.WriteLine("Error: Book title cannot be empty");
             return;
         }
 
-        Console.WriteLine($"книга '{title}' добавлена в каталог");
+        Console.WriteLine($"Book '{title}' added to catalog");
     }
 
     // оформляем книгу
-    public void CheckoutBook(string title, string userRole)
+    public void CheckoutBook(string title, UserRole userRole)
     {
         if (string.IsNullOrWhiteSpace(title))
         {
-            Console.WriteLine("ошибка: название книги не может быть пустым");
+            Console.WriteLine("Error: Book title cannot be empty");
             return;
         }
 
         var book = FindBookInCatalog(title, _catalog);
         if (book == null)
         {
-            Console.WriteLine($"ошибка: книга '{title}' не найдена в каталоге");
+            Console.WriteLine($"Error: Book '{title}' not found in catalog");
             return;
         }
 
         if (book.IsCheckedOut)
         {
-            Console.WriteLine($"ошибка: книга '{title}' уже выдана пользователю {book.CheckedOutBy}");
+            Console.WriteLine($"Error: Book '{title}' is already checked out to {book.CheckedOutBy}");
             return;
         }
 
         book.IsCheckedOut = true;
-        book.CheckedOutBy = userRole;
-        Console.WriteLine($"книга '{title}' выдана пользователю {userRole}");
+        book.CheckedOutBy = userRole.ToString();
+        Console.WriteLine($"Book '{title}' checked out to {userRole}");
     }
 
     // возвращаем книгу
@@ -57,27 +58,27 @@ public class RealLibraryManagement : ILibraryManagement
     {
         if (string.IsNullOrWhiteSpace(title))
         {
-            Console.WriteLine("ошибка: название книги не может быть пустым");
+            Console.WriteLine("Error: Book title cannot be empty");
             return;
         }
 
         var book = FindBookInCatalog(title, _catalog);
         if (book == null)
         {
-            Console.WriteLine($"ошибка: книга '{title}' не найдена в каталоге");
+            Console.WriteLine($"Error: Book '{title}' not found in catalog");
             return;
         }
 
         if (!book.IsCheckedOut)
         {
-            Console.WriteLine($"ошибка: книга '{title}' не выдана");
+            Console.WriteLine($"Error: Book '{title}' is not checked out");
             return;
         }
 
-        string previousBorrower = book.CheckedOutBy ?? "неизвестно";
+        string previousBorrower = book.CheckedOutBy ?? "Unknown";
         book.IsCheckedOut = false;
         book.CheckedOutBy = null;
-        Console.WriteLine($"книга '{title}' возвращена (была выдана: {previousBorrower})");
+        Console.WriteLine($"Book '{title}' returned (was checked out to: {previousBorrower})");
     }
 
     // ищем книгу в каталоге рекурсивно
