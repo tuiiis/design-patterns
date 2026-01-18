@@ -1,9 +1,6 @@
 namespace LibrarySystemPatterns.Patterns.Flyweight;
 
-/// <summary>
-/// Represents an Author in the Flyweight pattern.
-/// This class stores intrinsic (shared) state that can be reused across multiple contexts.
-/// </summary>
+// автор - легковесный объект, который переиспользуется
 public class Author
 {
     public string Name { get; }
@@ -13,5 +10,3 @@ public class Author
         Name = name ?? throw new ArgumentNullException(nameof(name));
     }
 }
-
-

@@ -1,16 +1,8 @@
 namespace LibrarySystemPatterns.Patterns.Adapter;
 
-/// <summary>
-/// Target interface for the search system.
-/// This is the interface that our application expects to use.
-/// </summary>
+// интерфейс для новой системы поиска
 public interface ISearchSystem
 {
-    /// <summary>
-    /// Performs a search with a simple string query.
-    /// </summary>
-    /// <param name="query">The search query as a simple string</param>
+    // поиск по простому текстовому запросу
     void Search(string query);
 }
-
-

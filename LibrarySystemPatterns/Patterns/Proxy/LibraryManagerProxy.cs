@@ -1,29 +1,20 @@
+using LibrarySystemPatterns.Patterns.Composite;
+
 namespace LibrarySystemPatterns.Patterns.Proxy;
 
-/// <summary>
-/// Proxy class that controls access to library management operations.
-/// Implements access control based on user roles.
-/// </summary>
+// прокси - контролирует доступ к операциям библиотеки
 public class LibraryManagerProxy : ILibraryManagement
 {
     private readonly RealLibraryManagement _realLibraryManagement;
     private readonly string _userRole;
 
-    /// <summary>
-    /// Creates a new proxy instance with the specified user role.
-    /// </summary>
-    /// <param name="userRole">The role of the user attempting to access library management</param>
-    public LibraryManagerProxy(string userRole)
+    public LibraryManagerProxy(string userRole, BookCategory catalog)
     {
         _userRole = userRole ?? throw new ArgumentNullException(nameof(userRole));
-        _realLibraryManagement = new RealLibraryManagement();
+        _realLibraryManagement = new RealLibraryManagement(catalog ?? throw new ArgumentNullException(nameof(catalog)));
     }
 
-    /// <summary>
-    /// Adds a book to the catalog if the user has Admin role.
-    /// Otherwise, access is denied.
-    /// </summary>
-    /// <param name="title">The title of the book to add</param>
+    // только админ может добавлять книги
     public void AddBookToCatalog(string title)
     {
         if (_userRole.Equals("Admin", StringComparison.OrdinalIgnoreCase))
@@ -32,9 +23,35 @@ public class LibraryManagerProxy : ILibraryManagement
         }
         else
         {
-            Console.WriteLine("Access Denied: Only Administrators can add books to the catalog.");
+            Console.WriteLine("доступ запрещен: только администраторы могут добавлять книги");
+        }
+    }
+
+    // пользователи и админы могут оформлять книги
+    public void CheckoutBook(string title, string userRole)
+    {
+        if (_userRole.Equals("User", StringComparison.OrdinalIgnoreCase) || 
+            _userRole.Equals("Admin", StringComparison.OrdinalIgnoreCase))
+        {
+            _realLibraryManagement.CheckoutBook(title, userRole);
+        }
+        else
+        {
+            Console.WriteLine($"доступ запрещен: роль '{_userRole}' не может оформлять книги");
+        }
+    }
+
+    // пользователи и админы могут возвращать книги
+    public void ReturnBook(string title)
+    {
+        if (_userRole.Equals("User", StringComparison.OrdinalIgnoreCase) || 
+            _userRole.Equals("Admin", StringComparison.OrdinalIgnoreCase))
+        {
+            _realLibraryManagement.ReturnBook(title);
+        }
+        else
+        {
+            Console.WriteLine($"доступ запрещен: роль '{_userRole}' не может возвращать книги");
         }
     }
 }
-
-

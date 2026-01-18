@@ -1,15 +1,14 @@
 namespace LibrarySystemPatterns.Patterns.Proxy;
 
-/// <summary>
-/// Interface for library management operations.
-/// </summary>
+// интерфейс для управления библиотекой
 public interface ILibraryManagement
 {
-    /// <summary>
-    /// Adds a book to the catalog.
-    /// </summary>
-    /// <param name="title">The title of the book to add</param>
+    // добавить книгу в каталог
     void AddBookToCatalog(string title);
+
+    // оформить книгу
+    void CheckoutBook(string title, string userRole);
+
+    // вернуть книгу
+    void ReturnBook(string title);
 }
-
-

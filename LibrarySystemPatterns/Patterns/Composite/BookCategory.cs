@@ -1,9 +1,6 @@
 namespace LibrarySystemPatterns.Patterns.Composite;
 
-/// <summary>
-/// Represents a BookCategory (Composite) in the Composite Pattern.
-/// A category can contain both books and other categories, forming a tree structure.
-/// </summary>
+// категория - это композит в паттерне composite, может содержать книги и другие категории
 public class BookCategory : LibraryComponent
 {
     private readonly List<LibraryComponent> _children = new();
@@ -12,10 +9,7 @@ public class BookCategory : LibraryComponent
     {
     }
 
-    /// <summary>
-    /// Adds a component (book or category) to this category.
-    /// </summary>
-    /// <param name="component">The component to add</param>
+    // добавляем книгу или категорию
     public void Add(LibraryComponent component)
     {
         if (component == null)
@@ -24,10 +18,7 @@ public class BookCategory : LibraryComponent
         _children.Add(component);
     }
 
-    /// <summary>
-    /// Removes a component from this category.
-    /// </summary>
-    /// <param name="component">The component to remove</param>
+    // удаляем компонент
     public bool Remove(LibraryComponent component)
     {
         if (component == null)
@@ -36,23 +27,17 @@ public class BookCategory : LibraryComponent
         return _children.Remove(component);
     }
 
-    /// <summary>
-    /// Gets all children components in this category.
-    /// </summary>
-    /// <returns>An enumerable collection of child components</returns>
+    // получаем все дочерние элементы
     public IEnumerable<LibraryComponent> GetChildren()
     {
         return _children;
     }
 
-    /// <summary>
-    /// Displays the category name and recursively displays all children.
-    /// </summary>
-    /// <param name="depth">The indentation depth</param>
+    // показываем категорию и все что внутри
     public override void Display(int depth)
     {
         string indent = new string(' ', depth * 2);
-        Console.WriteLine($"{indent}+ Category: {Name}");
+        Console.WriteLine($"{indent}+ категория: {Name}");
 
         foreach (var child in _children)
         {
@@ -60,5 +45,3 @@ public class BookCategory : LibraryComponent
         }
     }
 }
-
-

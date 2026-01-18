@@ -2,29 +2,28 @@ using LibrarySystemPatterns.Patterns.Flyweight;
 
 namespace LibrarySystemPatterns.Patterns.Composite;
 
-/// <summary>
-/// Represents a Book (Leaf) in the Composite Pattern.
-/// A Book has a Title and an Author reference (using Flyweight pattern).
-/// </summary>
+// книга - это лист в паттерне composite
 public class Book : LibraryComponent
 {
     public Author Author { get; }
-    public string Title => Name; // Title is stored in the Name property
+    public string Title => Name;
+    public bool IsCheckedOut { get; set; }
+    public string? CheckedOutBy { get; set; }
 
     public Book(string title, Author author) : base(title)
     {
         Author = author ?? throw new ArgumentNullException(nameof(author));
+        IsCheckedOut = false;
+        CheckedOutBy = null;
     }
 
-    /// <summary>
-    /// Displays the book with indentation based on depth.
-    /// </summary>
-    /// <param name="depth">The indentation depth</param>
+    // показываем книгу с отступом
     public override void Display(int depth)
     {
         string indent = new string(' ', depth * 2);
-        Console.WriteLine($"{indent}- Book: {Title} by {Author.Name}");
+        string status = IsCheckedOut 
+            ? $" [выдана: {CheckedOutBy}]" 
+            : " [доступна]";
+        Console.WriteLine($"{indent}- книга: {Title}, автор: {Author.Name}{status}");
     }
 }
-
-
