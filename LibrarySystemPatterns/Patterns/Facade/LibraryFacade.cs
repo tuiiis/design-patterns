@@ -14,20 +14,20 @@ public class LibraryFacade
     private readonly BookCategory _rootCategory;
     private readonly ISearchSystem _searchSystem;
     private readonly ILibraryManagement _libraryManagement;
-    private readonly UserRole _userRole;
+    private readonly User _user;
 
-    public LibraryFacade(UserRole userRole)
+    public LibraryFacade(User user)
     {
-        _userRole = userRole;
+        _user = user ?? throw new ArgumentNullException(nameof(user));
 
         // инициализируем все подсистемы
         _authorFactory = new AuthorFactory();
-        _rootCategory = new BookCategory("Library Catalog");
+        _rootCategory = SharedLibraryCatalog.Instance.Catalog;
         
         var oldSearchSystem = new OldSearchSystem();
         _searchSystem = new SearchSystemAdapter(oldSearchSystem);
         
-        _libraryManagement = new LibraryManagerProxy(userRole, _rootCategory);
+        _libraryManagement = new LibraryManagerProxy(user, _rootCategory);
     }
 
     // добавляем книгу в категорию (только для админа)
@@ -37,7 +37,7 @@ public class LibraryFacade
         _libraryManagement.AddBookToCatalog(title);
 
         // только админ может добавлять
-        if (_userRole != UserRole.Admin)
+        if (_user.Role != UserRole.Admin)
         {
             return;
         }
@@ -117,7 +117,7 @@ public class LibraryFacade
             return;
         }
 
-        _libraryManagement.CheckoutBook(title, _userRole);
+        _libraryManagement.CheckoutBook(title, _user.Name);
     }
 
     // возвращаем книгу через прокси

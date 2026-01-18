@@ -68,25 +68,33 @@ Console.WriteLine("=== Proxy Pattern ===\n");
 // проверяем контроль доступа через прокси
 var proxyDemoCatalog = new BookCategory("Catalog");
 
-var adminManager = new LibraryManagerProxy(UserRole.Admin, proxyDemoCatalog);
+var adminUser = new User("Admin", UserRole.Admin);
+var regularUser = new User("John", UserRole.User);
+
+var adminManager = new LibraryManagerProxy(adminUser, proxyDemoCatalog);
 Console.WriteLine("[Administrator]");
 adminManager.AddBookToCatalog("War and Peace");
 
-var regularUserManager = new LibraryManagerProxy(UserRole.User, proxyDemoCatalog);
+var regularUserManager = new LibraryManagerProxy(regularUser, proxyDemoCatalog);
 Console.WriteLine("\n[Regular User]");
 regularUserManager.AddBookToCatalog("Anna Karenina");
 Console.WriteLine();
 
-Console.WriteLine("=== Facade Pattern ===\n");
+Console.WriteLine("=== Facade Pattern with Shared Catalog ===\n");
+
+// создаем пользователей с именами
+var alice = new User("Alice", UserRole.Admin);
+var bob = new User("Bob", UserRole.User);
+var charlie = new User("Charlie", UserRole.User);
 
 // используем фасад для упрощенной работы с системой
-var adminFacade = new LibraryFacade(UserRole.Admin);
+var aliceFacade = new LibraryFacade(alice);
 
 // добавляем книги через bogus (демонстрация flyweight и composite)
 var faker = new Faker();
 var categories = new[] { "Fantasy", "Mystery", "Romance", "Thriller" };
 
-Console.WriteLine("Adding books via Bogus...\n");
+Console.WriteLine($"[{alice.Name} - Admin] Adding books via Bogus...\n");
 
 for (int i = 0; i < 10; i++)
 {
@@ -95,29 +103,54 @@ for (int i = 0; i < 10; i++)
     var bookTitle = string.Join(" ", words.Select(w => char.ToUpper(w[0]) + w.Substring(1)));
     var category = faker.PickRandom(categories);
     
-    adminFacade.AddBook(category, bookTitle, authorName);
+    aliceFacade.AddBook(category, bookTitle, authorName);
 }
 
-Console.WriteLine($"\n10 books added\n");
-
-// поиск через адаптер
-adminFacade.Search("fantasy");
-Console.WriteLine();
-
-// показываем каталог
-adminFacade.ShowCatalog();
-Console.WriteLine();
+Console.WriteLine($"\n10 books added by {alice.Name}\n");
 
 // добавляем конкретную книгу для демонстрации checkout/return
-adminFacade.AddBook("Fantasy", "The Hobbit", "J.R.R. Tolkien");
+aliceFacade.AddBook("Fantasy", "The Hobbit", "J.R.R. Tolkien");
 Console.WriteLine();
 
-// оформление и возврат через прокси
-// используем adminFacade, так как книга в его каталоге
-// прокси проверяет права - админ может оформлять и возвращать книги
-Console.WriteLine("[Administrator Checking Out Book]");
-adminFacade.CheckoutBook("The Hobbit");
+// демонстрируем общий каталог - Bob видит книги, добавленные Alice
+var bobFacade = new LibraryFacade(bob);
+Console.WriteLine($"[{bob.Name} - User] Viewing shared catalog:");
+bobFacade.ShowCatalog();
 Console.WriteLine();
-Console.WriteLine("[Administrator Returning Book]");
-adminFacade.ReturnBook("The Hobbit");
+
+// поиск через адаптер
+Console.WriteLine($"[{alice.Name}] Searching for 'fantasy':");
+aliceFacade.Search("fantasy");
+Console.WriteLine();
+
+// оформление книги Alice
+Console.WriteLine($"[{alice.Name} - Admin] Checking out 'The Hobbit':");
+aliceFacade.CheckoutBook("The Hobbit");
+Console.WriteLine();
+
+// Bob пытается оформить ту же книгу (должна быть уже занята)
+Console.WriteLine($"[{bob.Name} - User] Attempting to checkout 'The Hobbit':");
+bobFacade.CheckoutBook("The Hobbit");
+Console.WriteLine();
+
+// Charlie оформляет другую книгу
+var charlieFacade = new LibraryFacade(charlie);
+Console.WriteLine($"[{charlie.Name} - User] Checking out a different book:");
+// Найдем первую доступную книгу из каталога
+charlieFacade.ShowCatalog();
+Console.WriteLine();
+
+// Alice возвращает книгу
+Console.WriteLine($"[{alice.Name} - Admin] Returning 'The Hobbit':");
+aliceFacade.ReturnBook("The Hobbit");
+Console.WriteLine();
+
+// Теперь Bob может оформить книгу
+Console.WriteLine($"[{bob.Name} - User] Now checking out 'The Hobbit':");
+bobFacade.CheckoutBook("The Hobbit");
+Console.WriteLine();
+
+// Показываем финальное состояние каталога
+Console.WriteLine($"[{charlie.Name} - User] Final catalog state:");
+charlieFacade.ShowCatalog();
 Console.WriteLine();

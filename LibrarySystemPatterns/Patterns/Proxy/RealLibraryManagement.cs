@@ -27,11 +27,17 @@ public class RealLibraryManagement : ILibraryManagement
     }
 
     // оформляем книгу
-    public void CheckoutBook(string title, UserRole userRole)
+    public void CheckoutBook(string title, string userName)
     {
         if (string.IsNullOrWhiteSpace(title))
         {
             Console.WriteLine("Error: Book title cannot be empty");
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(userName))
+        {
+            Console.WriteLine("Error: User name cannot be empty");
             return;
         }
 
@@ -49,8 +55,8 @@ public class RealLibraryManagement : ILibraryManagement
         }
 
         book.IsCheckedOut = true;
-        book.CheckedOutBy = userRole.ToString();
-        Console.WriteLine($"Book '{title}' checked out to {userRole}");
+        book.CheckedOutBy = userName;
+        Console.WriteLine($"Book '{title}' checked out to {userName}");
     }
 
     // возвращаем книгу
